@@ -1,0 +1,8 @@
+fileignoreconfig:
+- filename: backend/src/GenerateRandomRows.ts
+  checksum: 9003639846c16f1aef543f835dfe25d42202ce111765e5bf0864c70d33b6d9ea
+- filename: backend/package-lock.json
+  checksum: 041bdb358f8b3ef2b2fd6e78661fe392e9f2a316f4442438350d1b6082b2b5dd
+- filename: mui-react-app/package-lock.json
+  checksum: cc1834785426b9454c4ea346b568402925a3e8cd2f32eccacf892b0ded82306e
+version: ""
