@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { Link } from "@mui/material";
+import { Link, MenuItem, Select, TextField } from "@mui/material";
 import QRStatus from "./QRStatus.tsx";
 import DownloadStatus from "./DownloadStatus.tsx";
 import StyledDataGrid from "../theme/StyledDataGrid.tsx";
@@ -9,6 +9,7 @@ import { ReactComponent as EditIcon } from "../assets/EditIcon.svg";
 import { ReactComponent as DownloadIcon } from "../assets/DownloadIcon.svg";
 import { ReactComponent as CheckIcon } from "../assets/CheckIcon.svg";
 import { ReactComponent as CloseIcon } from "../assets/CloseIcon.svg";
+import '../theme/row-styling.css';
 
 import {
   GridRowModesModel,
@@ -21,6 +22,8 @@ import {
   GridRowEditStopReasons,
   GridRowsProp,
 } from "@mui/x-data-grid";
+import EditLinkedContent from "./EditLinkedContent.tsx";
+import groupRowsByStandNo from "../utils/groupRowsByStandNumber.ts";
 
 interface FullFeaturedCrudGridProps {
   rows: GridRowsProp;
@@ -31,14 +34,11 @@ export default function FullFeaturedCrudGrid({
   rows,
   setRows,
 }: FullFeaturedCrudGridProps) {
-  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
-    {}
-  );
+  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
 
-  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
-    params,
-    event
-  ) => {
+  const groupedRows = groupRowsByStandNo(rows);
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
@@ -49,6 +49,11 @@ export default function FullFeaturedCrudGrid({
   };
 
   const handleSaveClick = (id: GridRowId) => () => {
+    const updatedRow = rows.find((row) => row.id === id);
+    if (updatedRow) {
+      console.log("Updated Row Details:", updatedRow);
+    }
+
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
@@ -64,10 +69,6 @@ export default function FullFeaturedCrudGrid({
     }
   };
 
-  const handleDeleteClick = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
-
   const processRowUpdate = (newRow: GridRowModel) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -76,6 +77,11 @@ export default function FullFeaturedCrudGrid({
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
+  };
+
+  const getRowClassName = (params) => {
+    const { groupIndex } = params.row;
+    return `group-${groupIndex % 2 === 0 ? 'light' : 'dark'}`;
   };
 
   const columns: GridColDef[] = [
@@ -110,7 +116,28 @@ export default function FullFeaturedCrudGrid({
       align: "center",
       headerAlign: "center",
       type: "singleSelect",
-      valueOptions: ["At Stand", "At Entrance Foyer", "Product Feature Zone"]
+      valueOptions: ["At Stand", "At Entrance Foyer", "Product Feature Zone"],
+      renderEditCell: (params) => (
+        <Select
+          value={params.value}
+          onChange={(e) =>
+            params.api.setEditCellValue({
+              id: params.id,
+              field: params.field,
+              value: e.target.value,
+            })
+          }
+          size="small"
+          sx={{ padding: "4px" }}
+          fullWidth
+        >
+          {(params.colDef as any).valueOptions.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      ),
     },
     {
       field: "linkedContent",
@@ -125,12 +152,24 @@ export default function FullFeaturedCrudGrid({
           {params.value.text}
         </Link>
       ),
+      renderEditCell: (params) => (
+        <EditLinkedContent
+          value={params.value}
+          onChange={(newValue) =>
+            params.api.setEditCellValue({
+              id: params.id,
+              field: params.field,
+              value: newValue,
+            })
+          }
+        />
+      ),
     },
     {
       field: "qrStatus",
       headerName: "QR Status",
       sortable: false,
-      editable: true,
+      editable: false,
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -150,6 +189,25 @@ export default function FullFeaturedCrudGrid({
       valueOptions: ["Downloaded", "Not Downloaded"],
       renderCell: (params) => (
         <DownloadStatus status={params.value.status} time={params.value.time} />
+      ),
+      renderEditCell: (params) => (
+        <Select
+          value={params.value.status}
+          onChange={(e) =>
+            params.api.setEditCellValue({
+              id: params.id,
+              field: params.field,
+              value: { ...params.value, status: e.target.value },
+            })
+          }
+          size="small"
+        >
+          {(params.colDef as any).valueOptions.map((option: string) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
       ),
     },
     {
@@ -220,7 +278,7 @@ export default function FullFeaturedCrudGrid({
       }}
     >
       <StyledDataGrid
-        rows={rows}
+        rows={groupedRows}
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
@@ -232,6 +290,7 @@ export default function FullFeaturedCrudGrid({
         checkboxSelection
         getRowHeight={() => "auto"}
         disableRowSelectionOnClick
+        getRowClassName={getRowClassName}
       />
     </Box>
   );

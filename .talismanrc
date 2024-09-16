@@ -1,4 +1,8 @@
 fileignoreconfig:
+- filename: mui-react-app/src/utils/groupRowsByStandNumber.ts
+  checksum: 1a542bce0d1759af3414a4bdb87cc1fac43fd9c387796bdd512fca853ba77814
+- filename: mui-react-app/src/components/FullFeaturedCrudGrid.tsx
+  checksum: 3756b5d136c8628d42325fbaaa21a9d6f59d4ae1a118caf1f551c6905d5d5435
 - filename: backend/src/GenerateRandomRows.ts
   checksum: 9003639846c16f1aef543f835dfe25d42202ce111765e5bf0864c70d33b6d9ea
 - filename: backend/package-lock.json

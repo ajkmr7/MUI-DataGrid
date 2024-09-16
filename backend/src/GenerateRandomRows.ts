@@ -66,6 +66,8 @@ const generateRandomDate = (): string => {
   }.${pastDate.getFullYear()}`;
 };
 
+const standNumbers = ["STND001", "STND002", "STND003", "STND004", "STND005", "STND006", "STND007", "STND008", "STND009", "STND010", "STND011", "STND012", "STND013", "STND014", "STND015", "STND016"];
+
 const generateRandomRows = (numRows: number): RowData[] => {
   const rows: RowData[] = [];
   for (let i = 0; i < numRows; i++) {
@@ -74,7 +76,7 @@ const generateRandomRows = (numRows: number): RowData[] => {
       id: uuidv4(),
       qrDisplayName: generateRandomDisplayName(),
       shortCode: generateRandomShortcode(),
-      standNo: `STND${generateRandomString(4)}`,
+      standNo: getRandomArrayElement(standNumbers),
       location: generateRandomLocation(),
       linkedContent: generateRandomLinkedContent(),
       qrStatus: qrStatus,
