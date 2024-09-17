@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Chip, Typography } from "@mui/material";
+import { Chip } from "@mui/material";
 
 const QRStatus = ({ status, time }) => (
   <div

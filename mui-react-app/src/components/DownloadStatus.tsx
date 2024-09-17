@@ -1,7 +1,7 @@
 import * as React from "react";
 
 const DownloadStatus = ({ status, time }) =>
-  status == "Downloaded" ? (
+  status === "Downloaded" ? (
     // TODO: Add download tick icon
     <div
       style={{
