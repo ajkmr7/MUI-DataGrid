@@ -9,7 +9,7 @@ import { ReactComponent as EditIcon } from "../assets/EditIcon.svg";
 import { ReactComponent as DownloadIcon } from "../assets/DownloadIcon.svg";
 import { ReactComponent as CheckIcon } from "../assets/CheckIcon.svg";
 import { ReactComponent as CloseIcon } from "../assets/CloseIcon.svg";
-import '../theme/row-styling.css';
+import "../theme/row-styling.css";
 
 import {
   GridRowModesModel,
@@ -21,24 +21,64 @@ import {
   GridRowModel,
   GridRowEditStopReasons,
   GridRowsProp,
+  GridSortModel,
 } from "@mui/x-data-grid";
 import EditLinkedContent from "./EditLinkedContent.tsx";
 import groupRowsByStandNo from "../utils/groupRowsByStandNumber.ts";
+import axios from "axios";
 
-interface FullFeaturedCrudGridProps {
-  rows: GridRowsProp;
-  setRows: React.Dispatch<React.SetStateAction<GridRowsProp>>;
-}
-
-export default function FullFeaturedCrudGrid({
-  rows,
-  setRows,
-}: FullFeaturedCrudGridProps) {
-  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
-
+export default function FullFeaturedCrudGrid() {
+  const [rows, setRows] = React.useState<GridRowsProp>([]);
   const groupedRows = groupRowsByStandNo(rows);
+  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
+    {}
+  );
+  const [loading, setLoading] = React.useState<boolean>(false);
 
-  const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
+  const fetchRows = async (
+    page: number,
+    limit: number
+  ): Promise<GridRowsProp> => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles?page=${page}&limit=${limit}`
+      );
+      setLoading(false);
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+      return [];
+    }
+  };
+
+  const fetchSortedRows = async (sortModel: GridSortModel) => {
+    setLoading(true);
+    const sortField = sortModel[0]?.field;
+    const sortOrder = sortModel[0]?.sort;
+
+    const response = await fetch(
+      `https://qrm-service.netlify.app/.netlify/functions/api/sortedData?field=${sortField}&order=${sortOrder}`
+    );
+    const sortedData = await response.json();
+
+    setRows(sortedData);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    const loadData = async () => {
+      const fetchedRows = await fetchRows(1, 50);
+      setRows(fetchedRows);
+    };
+    loadData();
+  }, []);
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+    params,
+    event
+  ) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
@@ -79,9 +119,16 @@ export default function FullFeaturedCrudGrid({
     setRowModesModel(newRowModesModel);
   };
 
+  const handleSortModelChange = (sortModel: GridSortModel) => {
+    if (sortModel.length > 0) {
+      console.log(sortModel);
+      fetchSortedRows(sortModel);
+    }
+  };
+
   const getRowClassName = (params) => {
     const { groupIndex } = params.row;
-    return `group-${groupIndex % 2 === 0 ? 'light' : 'dark'}`;
+    return `group-${groupIndex % 2 === 0 ? "light" : "dark"}`;
   };
 
   const columns: GridColDef[] = [
@@ -278,6 +325,12 @@ export default function FullFeaturedCrudGrid({
       }}
     >
       <StyledDataGrid
+        slotProps={{
+          loadingOverlay: {
+            variant: "skeleton",
+            noRowsVariant: "skeleton",
+          },
+        }}
         rows={groupedRows}
         columns={columns}
         editMode="row"
@@ -291,6 +344,9 @@ export default function FullFeaturedCrudGrid({
         getRowHeight={() => "auto"}
         disableRowSelectionOnClick
         getRowClassName={getRowClassName}
+        sortingMode="server"
+        onSortModelChange={handleSortModelChange}
+        loading={loading}
       />
     </Box>
   );
