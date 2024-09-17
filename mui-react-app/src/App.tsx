@@ -9,7 +9,7 @@ const fetchRows = async (
 ): Promise<GridRowsProp> => {
   try {
     const response = await axios.get(
-      `http://localhost:5050/api/qr-profiles?page=${page}&limit=${limit}`
+      `https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles?page=${page}&limit=${limit}`
     );
     return response.data || [];
   } catch (error) {
