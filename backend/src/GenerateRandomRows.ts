@@ -1,5 +1,4 @@
 import RowData from "./RowData";
-import { v4 as uuidv4 } from "uuid";
 
 const getRandomArrayElement = <T>(array: T[]): T => {
   return array[Math.floor(Math.random() * array.length)];
@@ -73,7 +72,6 @@ const generateRandomRows = (numRows: number): RowData[] => {
   for (let i = 0; i < numRows; i++) {
     const qrStatus = generateRandomQRStatus();
     rows.push({
-      id: uuidv4(),
       qrDisplayName: generateRandomDisplayName(),
       shortCode: generateRandomShortcode(),
       standNo: getRandomArrayElement(standNumbers),
