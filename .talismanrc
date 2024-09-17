@@ -10,5 +10,5 @@ fileignoreconfig:
 - filename: mui-react-app/package-lock.json
   checksum: cc1834785426b9454c4ea346b568402925a3e8cd2f32eccacf892b0ded82306e
 - filename: backend/package-lock.json
-  checksum: cd5dce56a48b067966138fe7c2978a3d18f9196aa5f23ac21d323c14cbfab9ec
+  checksum: 17a077dd0c872bbd5252e60b6d2ae2a2f2a9f1a756446763dea718d00f7b8bb7
 version: ""

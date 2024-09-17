@@ -2,9 +2,16 @@ import express, { Router } from "express";
 import serverless from "serverless-http";
 import generateRandomRows from "./GenerateRandomRows";
 import RowData from "./RowData";
+const cors = require('cors');
 
 const api = express();
 const router = Router();
+
+api.use(cors({
+  origin: "*",
+  methods: "GET,POST,OPTIONS",
+  allowedHeaders: "Content-Type"
+}));
 
 router.get("/qr-profiles", (req, res) => {
   const page = Number(req.query.page) || 1;
