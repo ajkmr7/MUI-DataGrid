@@ -15,6 +15,7 @@ interface DownloadStatus {
 }
 
 interface RowData {
+  id: string,
   qrDisplayName: string;
   shortCode: string;
   standNo: string;

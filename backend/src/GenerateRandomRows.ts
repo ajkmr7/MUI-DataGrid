@@ -72,6 +72,7 @@ const generateRandomRows = (numRows: number): RowData[] => {
   for (let i = 0; i < numRows; i++) {
     const qrStatus = generateRandomQRStatus();
     rows.push({
+      id: `${generateRandomString(6)}-${generateRandomString(8)}-${generateRandomString(8)}-${generateRandomString(6)}`,
       qrDisplayName: generateRandomDisplayName(),
       shortCode: generateRandomShortcode(),
       standNo: getRandomArrayElement(standNumbers),
