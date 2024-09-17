@@ -55,6 +55,6 @@ router.get("/sortedData", (req, res) => {
   res.json(paginatedRows);
 });
 
-api.use("/api/", router);
+api.use("/.netlify/functions/api", router);
 
 export const handler = serverless(api);

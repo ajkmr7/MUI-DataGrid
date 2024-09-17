@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "generateQrProfileData.js",
+  "scripts": {
+    "start": "./node_modules/.bin/netlify-lambda serve dist",
+    "build": "./node_modules/.bin/netlify-lambda build dist"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@netlify/functions": "2.8.1",
-    "cors": "2.8.5",
-    "express": "4.21.0",
+    "netlify-lambda": "2.0.16",
     "serverless-http": "3.2.0"
   },
   "devDependencies": {
