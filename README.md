@@ -38,9 +38,3 @@ Material UI is using `Emotion` as a styling engine by default. If you want to us
 ```bash
 npm install @mui/styled-engine-sc styled-components
 ```
-
-## Documentation References
-
-[Data Grid Lazy Loading](https://mui.com/x/react-data-grid/row-updates/)
-
-[Row Editing](https://mui.com/x/react-data-grid/editing/)
