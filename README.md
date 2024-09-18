@@ -1,5 +1,10 @@
 # Project Setup
 
+## Hosted Web App on Netlify
+
+[React Frontend](https://qrm-datagrid.netlify.app/)
+[Express as Serverless function](https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles)
+
 ## Backend Express Server Setup
 
 1. Checkout to backend dir
