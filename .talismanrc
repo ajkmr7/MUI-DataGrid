@@ -11,4 +11,8 @@ fileignoreconfig:
   checksum: cc1834785426b9454c4ea346b568402925a3e8cd2f32eccacf892b0ded82306e
 - filename: backend/package-lock.json
   checksum: 17a077dd0c872bbd5252e60b6d2ae2a2f2a9f1a756446763dea718d00f7b8bb7
+- filename: react-data-grid/package-lock.json
+  checksum: a5b1949ef29a181ed20d3a3564bfb2b3ff4db81bc5246492f95ee770d7f38028
+- filename: react-data-grid/src/App.tsx
+  checksum: 095e6518df2d0bfa7f5e60f3471ff3238e3524fbff45ef5bcd8f7f76d687ecd5
 version: ""
