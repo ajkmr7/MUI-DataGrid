@@ -10,7 +10,6 @@ import { ReactComponent as DownloadIcon } from "./assets/DownloadIcon.svg";
 import { ReactComponent as CheckIcon } from "./assets/CheckIcon.svg";
 import { ReactComponent as CloseIcon } from "./assets/CloseIcon.svg";
 import DownloadStatus from "./components/DownloadStatus.tsx";
-import DataGrid from "react-data-grid";
 
 interface RowData {
   id: string;
@@ -253,7 +252,7 @@ function App() {
   const fetchRows = async (): Promise<RowData[]> => {
     try {
       const response = await axios.get(
-        `https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles?page=${page}&limit=${PAGE_LIMIT}`
+        `https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles?page=0&limit=${PAGE_LIMIT}`
       );
       return response.data || [];
     } catch (error) {
@@ -283,7 +282,7 @@ function App() {
       }
     };
     loadData();
-  }, [page, sortColumn, sortDirection]);
+  }, [page]);
 
   async function handleScroll(event: React.UIEvent<HTMLDivElement>) {
     if (isLoading || !isAtBottom(event)) return;

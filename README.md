@@ -2,44 +2,49 @@
 
 ## Hosted Web App on Netlify
 
-[React Frontend](https://qrm-datagrid.netlify.app/)
-[Express as Serverless function](https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles)
+- [React Frontend](https://qrm-datagrid.netlify.app/)
+- [Express as Serverless Function](https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles)
 
-## Backend Express Server Setup
+## Backend: Express Server Setup
 
-1. Checkout to backend dir
-2. Install npm packages
-3. Make use of tsc command for auto-conversion of typescript files to javascript (supporting interop)
-4. Run index.js file
+To set up the backend Express server:
+
+1. Navigate to the `backend` directory.
+2. Install the necessary npm packages.
+3. Use the `tsc` command to automatically convert TypeScript files to JavaScript (enabling interop support).
+4. Run the `index.js` file.
 
 ```bash
-cd backend && npm install && tsc && node dist/index.js
+cd backend
+npm install
+tsc
+node dist/index.js
 ```
 
-## Frontend React App Setup
+## Frontend: React App Setup (MUI Datagrid Implementation)
 
-1. Checkout to mui-react-app dir
-2. Install npm packages
-3. Run react project
+To set up the React frontend using MUI Datagrid:
+
+1. Navigate to the `mui-react-app` directory.
+2. Install the required npm packages.
+3. Start the React project.
 
 ```bash
-cd mui-react-app && npm install && npm start
+cd mui-react-app
+npm install
+npm start
 ```
 
-## MUI Datagrid Setup
+## Frontend: React App Setup (React Data Grid Implementation)
+
+To set up the React frontend using React Data Grid:
+
+1. Navigate to the `react-data-grid` directory.
+2. Install the necessary npm packages.
+3. Start the React project.
 
 ```bash
-npm install @mui/x-data-grid
-```
-
-Data Grid package has a peer dependency on @mui/material
-
-```bash
-npm install @mui/material @emotion/react @emotion/styled
-```
-
-Material UI is using `Emotion` as a styling engine by default. If you want to use styled-components
-
-```bash
-npm install @mui/styled-engine-sc styled-components
+cd react-data-grid
+npm install
+npm start
 ```
