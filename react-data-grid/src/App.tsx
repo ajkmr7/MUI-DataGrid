@@ -10,6 +10,7 @@ import { ReactComponent as DownloadIcon } from "./assets/DownloadIcon.svg";
 import { ReactComponent as CheckIcon } from "./assets/CheckIcon.svg";
 import { ReactComponent as CloseIcon } from "./assets/CloseIcon.svg";
 import DownloadStatus from "./components/DownloadStatus.tsx";
+import { SortColumn } from "react-data-grid";
 
 interface RowData {
   id: string;
@@ -26,9 +27,10 @@ interface RowData {
 function App() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [rows, setRows] = React.useState<RowData[]>([]);
+  const [sortColumns, setSortColumns] = React.useState<readonly SortColumn[]>(
+    []
+  );
   const [page, setPage] = React.useState<number>(0);
-  const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc'>('asc');
-  const [sortColumn, setSortColumn] = React.useState<string | null>(null);
   const PAGE_LIMIT = 5;
 
   const handleEditClick = (rowId: string) => {
@@ -63,29 +65,17 @@ function App() {
     // Download logic
   };
 
-  const handleSortChange = (columnKey: string) => {
-    const newSortDirection = sortColumn === columnKey && sortDirection === 'asc' ? 'desc' : 'asc';
-    setSortDirection(newSortDirection);
-    setSortColumn(columnKey);
-    setPage(0);
-    fetchSortedRows();
-  };
-
   const columns = [
     {
       name: "QR Display Name",
       key: "qrDisplayName",
       sortable: true,
-      sortDirection: sortColumn === 'qrDisplayName' ? sortDirection : null,
-      onHeaderClick: () => handleSortChange('qrDisplayName'),
     },
     { name: "Short Code", key: "shortCode" },
     {
       name: "Stand No.",
       key: "standNo",
       sortable: true,
-      sortDirection: sortColumn === 'standNo' ? sortDirection : null,
-      onHeaderClick: () => handleSortChange('standNo'),
     },
     {
       name: "Location",
@@ -244,42 +234,51 @@ function App() {
     },
   ];
 
-  const columnsWithSort = columns.map(column => ({
-    ...column,
-    onHeaderClick: () => column.sortable && handleSortChange(column.key),
-  }));
-
   const fetchRows = async (): Promise<RowData[]> => {
     try {
       const response = await axios.get(
-        `https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles?page=0&limit=${PAGE_LIMIT}`
+        `https://qrm-service.netlify.app/.netlify/functions/api/qr-profiles?page=${page}&limit=${PAGE_LIMIT}`
       );
       return response.data || [];
     } catch (error) {
       console.error("Error fetching data:", error);
       return [];
     }
-  }
+  };
 
-  const fetchSortedRows = async () => {
-    setIsLoading(true);
-    const sortField = sortColumn;
-    const sortOrder = sortDirection;
+  const fetchSortedRows = async (): Promise<RowData[]> => {
+    const sortField = sortColumns[0].columnKey;
+    const sortOrder = sortColumns[0].direction.toLowerCase();
 
     const response = await fetch(
-      `https://qrm-service.netlify.app/.netlify/functions/api/sortedData?field=${sortField}&order=${sortOrder}`
+      `https://qrm-service.netlify.app/.netlify/functions/api/sortedData?page=${page}&limit=${PAGE_LIMIT}&field=${sortField}&order=${sortOrder}`
     );
     return response.json();
   };
 
   React.useEffect(() => {
+    const sortRows = async () => {
+      setIsLoading(true);
+      if (sortColumns.length !== 1) return rows;
+      const newlySortedRows = await fetchSortedRows();
+      page === 0
+        ? setRows(newlySortedRows)
+        : setRows((currentSortedRows) => [
+            ...currentSortedRows,
+            ...newlySortedRows,
+          ]);
+      setIsLoading(false);
+    };
+    sortRows();
+  }, [page, sortColumns]);
+
+  React.useEffect(() => {
     const loadData = async () => {
-      if (!isLoading) {
-        setIsLoading(true);
-        const fetchedRows = await fetchRows();
-        setRows((currentRows) => [...currentRows, ...fetchedRows]);
-        setIsLoading(false);
-      }
+      if (sortColumns.length !== 0) return;
+      setIsLoading(true);
+      const fetchedRows = await fetchRows();
+      setRows((currentRows) => [...currentRows, ...fetchedRows]);
+      setIsLoading(false);
     };
     loadData();
   }, [page]);
@@ -293,7 +292,9 @@ function App() {
     return row.id;
   }
 
-  function isAtBottom({ currentTarget }: React.UIEvent<HTMLDivElement>): boolean {
+  function isAtBottom({
+    currentTarget,
+  }: React.UIEvent<HTMLDivElement>): boolean {
     return (
       currentTarget.scrollTop + currentTarget.clientHeight >=
       currentTarget.scrollHeight
@@ -304,12 +305,15 @@ function App() {
 
   return (
     <>
+      ``
       <StyledDataGrid
-        columns={columnsWithSort}
+        columns={columns}
         rows={rows}
         rowKeyGetter={rowKeyGetter}
         onRowsChange={setRows}
         onScroll={handleScroll}
+        sortColumns={sortColumns}
+        onSortColumnsChange={setSortColumns}
         headerRowHeight={60}
         rowHeight={120}
       />

@@ -37,7 +37,7 @@ router.get("/sortedData", (req, res) => {
   const currentPage = Number(page) || 1;
   const pageSize = Number(limit) || 50;
 
-  const allRows: RowData[] = generateRandomRows(500);
+  const allRows: RowData[] = generateRandomRows(pageSize);
 
   const sortedRows = allRows.sort((a, b) => {
     const fieldA = a[field as keyof RowData];
