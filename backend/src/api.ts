@@ -3,6 +3,10 @@ import serverless from "serverless-http";
 import generateRandomRows from "./GenerateRandomRows";
 import RowData from "./RowData";
 const cors = require('cors');
+require('dotenv').config()
+
+process.env.SILENCE_EMPTY_LAMBDA_WARNING  = "true"
+process.env.CONTEXT = "production"
 
 const api = express();
 const router = Router();
